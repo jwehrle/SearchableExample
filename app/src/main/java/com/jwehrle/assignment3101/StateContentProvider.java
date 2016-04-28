@@ -5,7 +5,9 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
@@ -21,6 +23,8 @@ public class StateContentProvider extends ContentProvider {
     private static final int ENTRY_INSERTION = 5;
     private static final int DELETE_ID = 6;
     private static final int UPDATE_ID = 7;
+    private static final int ALL_STATES = 8;
+    private static final int BULK_INSERT = 9;
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
@@ -28,9 +32,11 @@ public class StateContentProvider extends ContentProvider {
         sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/animalSearch/*", ANIMAL_SEARCH);
         sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/state/*", STATE_QUERY);
         sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/animal/*", ANIMAL_QUERY);
-        sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/entry/*", ENTRY_INSERTION);
+        sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/entry", ENTRY_INSERTION);
         sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/delete/#", DELETE_ID);
         sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/update/#", UPDATE_ID);
+        sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/all_states", ALL_STATES);
+        sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/bulk_insert", BULK_INSERT);
     }
 
 
@@ -52,6 +58,15 @@ public class StateContentProvider extends ContentProvider {
         }
         int match = sUriMatcher.match(uri);
         switch (match) {
+            case ALL_STATES:
+                return dbHelper.getReadableDatabase().query(
+                        StateContract.StateEntry.TABLE,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
             case STATE_SEARCH:
                 String stateSearch = uri.getLastPathSegment();
                 return dbHelper.getReadableDatabase().query(
@@ -107,6 +122,7 @@ public class StateContentProvider extends ContentProvider {
         switch (match) {
             case STATE_SEARCH:
             case ANIMAL_SEARCH:
+            case ALL_STATES:
                 return "vnd.android.cursor.dir/" + StateContract.STATE_PATH;
             case STATE_QUERY:
             case ANIMAL_QUERY:
@@ -136,10 +152,26 @@ public class StateContentProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(@Nullable Uri uri, String selection, String[] selectionArgs) {
-        if (uri == null) {
-            throw new UnsupportedOperationException("Null uri not allowed.");
+    public int bulkInsert(@Nullable Uri uri, @NonNull ContentValues[] values) {
+        int numberInserted = 0;
+        int match = sUriMatcher.match(uri);
+        switch (match) {
+            case BULK_INSERT:
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                for (ContentValues cv: values) {
+                    db.insert(StateContract.StateEntry.TABLE, null, cv);
+                    numberInserted++;
+                }
+                db.close();
         }
+        return numberInserted;
+    }
+
+    @Override
+    public int delete(@Nullable Uri uri, String selection, String[] selectionArgs) {
+//        if (uri == null) {
+//            throw new UnsupportedOperationException("Null uri not allowed.");
+//        }
         int match = sUriMatcher.match(uri);
         switch (match) {
             case DELETE_ID:
@@ -171,4 +203,6 @@ public class StateContentProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
     }
+
+
 }
