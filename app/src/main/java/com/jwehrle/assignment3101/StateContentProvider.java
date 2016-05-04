@@ -44,7 +44,7 @@ public class StateContentProvider extends ContentProvider {
         sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/update/#", UPDATE_ID);
         sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/all_states", ALL_STATES);
         sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/bulk_insert", BULK_INSERT);
-        sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/suggest", SUGGESTION_QUERY);
+        sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/suggest/*", SUGGESTION_QUERY);
     }
 
 
@@ -70,13 +70,14 @@ public class StateContentProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         switch (match) {
             case SUGGESTION_QUERY:
-                String suggestion = uri.getLastPathSegment();
-                Log.d(LOG_TAG, "Suggest Text is " + suggestion);
+                String input = selectionArgs[0].equals("") ? "" : selectionArgs[0] + "%";
+                String [] suggestion = new String [] {input};
+                Log.d(LOG_TAG, "Suggest Text is " + suggestion[0]);
                 return dbHelper.getReadableDatabase().query(
                         StateContract.StateEntry.TABLE,
                         projection,
-                        SearchManager.SUGGEST_COLUMN_TEXT_1 + " MATCH ?",
-                        new String[] {suggestion},
+                        selection, //SearchManager.SUGGEST_COLUMN_TEXT_1 + " LIKE ?",
+                        suggestion,//selectionArgs,//new String[] {suggestion + "%"},
                         null,
                         null,
                         sortOrder);
