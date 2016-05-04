@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 /**
  * Created by jwehrle on 4/27/16.
+ * State data to load if the state_table is empty. I know there must be a better way but I just
+ * need to get this assignment moving.
  */
 public class StateData {
 

@@ -1,5 +1,6 @@
 package com.jwehrle.assignment3101;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -13,12 +14,13 @@ public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper sInstance = null;
 
     private static final String DATABASE_NAME = "state_database";
-    private static final int DATABASE_VERSION = 1;
-    private static final String CREATE_TABLE =
-            StateContract.StateEntry.TABLE + "(" +
+    private static final int DATABASE_VERSION = 4;
+
+    private static final String CREATE_TABLE = "create table " +
+            StateContract.StateEntry.TABLE + " (" +
             StateContract.StateEntry._ID + " integer primary key autoincrement, " +
-            StateContract.StateEntry.NAME + " text, " +
-            StateContract.StateEntry.ANIMAL + " text); ";
+            SearchManager.SUGGEST_COLUMN_TEXT_1 + " text, " +
+            StateContract.StateEntry.ANIMAL + " text);";
 
     public static synchronized DBHelper getInstance(Context context) {
         if (sInstance == null) {

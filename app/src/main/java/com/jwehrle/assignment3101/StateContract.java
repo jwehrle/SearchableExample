@@ -19,7 +19,6 @@ public class StateContract {
         public static final Uri STATE_URI = BASE_CONTENT_URI.buildUpon().appendPath(STATE_PATH).build();
 
         public static final String TABLE = "state_table";
-        public static final String NAME = "name";
         public static final String ANIMAL = "animal";
 
         public static Uri buildStateEntryUri(long id) {

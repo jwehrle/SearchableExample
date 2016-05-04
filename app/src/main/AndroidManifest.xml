@@ -17,13 +17,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".SearchableActivity"
-            android:label="@string/title_activity_searchable"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
 
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -35,7 +28,7 @@
 
         <meta-data
             android:name="android.app.default_searchable"
-            android:value=".SearchableActivity" />
+            android:value=".MainActivity" />
 
         <provider
             android:authorities="com.jwehrle.state.provider"

@@ -1,5 +1,6 @@
 package com.jwehrle.assignment3101;
 
+import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -9,12 +10,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Created by jwehrle on 4/27/16.
  * Basic ContentProvider for the simple State table.
  */
 public class StateContentProvider extends ContentProvider {
+
+    public static String LOG_TAG = StateContentProvider.class.getName();
+
+    public static String SUGGEST_URI =  StateContract.AUTHORITY + StateContract.STATE_PATH + "/suggest";
 
     private static final int STATE_SEARCH = 1;
     private static final int ANIMAL_SEARCH = 2;
@@ -25,6 +31,7 @@ public class StateContentProvider extends ContentProvider {
     private static final int UPDATE_ID = 7;
     private static final int ALL_STATES = 8;
     private static final int BULK_INSERT = 9;
+    private static final int SUGGESTION_QUERY = 10;
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
@@ -37,6 +44,7 @@ public class StateContentProvider extends ContentProvider {
         sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/update/#", UPDATE_ID);
         sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/all_states", ALL_STATES);
         sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/bulk_insert", BULK_INSERT);
+        sUriMatcher.addURI(StateContract.AUTHORITY, StateContract.STATE_PATH + "/suggest", SUGGESTION_QUERY);
     }
 
 
@@ -56,9 +64,24 @@ public class StateContentProvider extends ContentProvider {
         if (uri == null) {
             throw new UnsupportedOperationException("Null uri not allowed.");
         }
+
+        Log.d(LOG_TAG, "Just entered query() and uri = " + uri.toString());
+
         int match = sUriMatcher.match(uri);
         switch (match) {
+            case SUGGESTION_QUERY:
+                String suggestion = uri.getLastPathSegment();
+                Log.d(LOG_TAG, "Suggest Text is " + suggestion);
+                return dbHelper.getReadableDatabase().query(
+                        StateContract.StateEntry.TABLE,
+                        projection,
+                        SearchManager.SUGGEST_COLUMN_TEXT_1 + " MATCH ?",
+                        new String[] {suggestion},
+                        null,
+                        null,
+                        sortOrder);
             case ALL_STATES:
+                Log.d(LOG_TAG, "All states query.");
                 return dbHelper.getReadableDatabase().query(
                         StateContract.StateEntry.TABLE,
                         projection,
@@ -69,16 +92,18 @@ public class StateContentProvider extends ContentProvider {
                         sortOrder);
             case STATE_SEARCH:
                 String stateSearch = uri.getLastPathSegment();
+                Log.d(LOG_TAG, "Search Text is " + stateSearch);
                 return dbHelper.getReadableDatabase().query(
                         StateContract.StateEntry.TABLE,
                         projection,
-                        StateContract.StateEntry.NAME + " LIKE ?",
+                        SearchManager.SUGGEST_COLUMN_TEXT_1 + " LIKE ?",
                         new String[] {"%" + stateSearch + "%"},
                         null,
                         null,
                         sortOrder);
             case ANIMAL_SEARCH:
                 String animalSearch = uri.getLastPathSegment();
+                Log.d(LOG_TAG, "Search Text is " + animalSearch);
                 return dbHelper.getReadableDatabase().query(
                         StateContract.StateEntry.TABLE,
                         projection,
@@ -89,16 +114,18 @@ public class StateContentProvider extends ContentProvider {
                         sortOrder);
             case STATE_QUERY:
                 String state = uri.getLastPathSegment();
+                Log.d(LOG_TAG, "Search Text is " + state);
                 return dbHelper.getReadableDatabase().query(
                         StateContract.StateEntry.TABLE,
                         projection,
-                        StateContract.StateEntry.NAME + " = ?",
+                        SearchManager.SUGGEST_COLUMN_TEXT_1 + " = ?",
                         new String[] {state},
                         null,
                         null,
                         sortOrder);
             case ANIMAL_QUERY:
                 String animal = uri.getLastPathSegment();
+                Log.d(LOG_TAG, "Search Text is " + animal);
                 return dbHelper.getReadableDatabase().query(
                         StateContract.StateEntry.TABLE,
                         projection,
@@ -123,6 +150,7 @@ public class StateContentProvider extends ContentProvider {
             case STATE_SEARCH:
             case ANIMAL_SEARCH:
             case ALL_STATES:
+            case SUGGESTION_QUERY:
                 return "vnd.android.cursor.dir/" + StateContract.STATE_PATH;
             case STATE_QUERY:
             case ANIMAL_QUERY:
@@ -155,11 +183,13 @@ public class StateContentProvider extends ContentProvider {
     public int bulkInsert(@Nullable Uri uri, @NonNull ContentValues[] values) {
         int numberInserted = 0;
         int match = sUriMatcher.match(uri);
+        Log.d(LOG_TAG, "Entered bulkInsert() with uri = " + uri.toString());
         switch (match) {
             case BULK_INSERT:
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                 for (ContentValues cv: values) {
                     db.insert(StateContract.StateEntry.TABLE, null, cv);
+                    Log.d(LOG_TAG, "Inserted " + cv.getAsString(SearchManager.SUGGEST_COLUMN_TEXT_1));
                     numberInserted++;
                 }
                 db.close();
