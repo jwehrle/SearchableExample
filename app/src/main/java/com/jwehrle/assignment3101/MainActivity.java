@@ -3,10 +3,12 @@ package com.jwehrle.assignment3101;
 import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,14 +22,22 @@ public class MainActivity extends AppCompatActivity {
 
     public static String LOG_TAG = MainActivity.class.getName();
     ImageView stateAnimal;
+    String animalURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         stateAnimal = (ImageView)findViewById(R.id.image_state_animal);
+
+        Intent searchIntent = getIntent();
+
+        animalURL = searchIntent.getAction().equals(Intent.ACTION_VIEW) ?
+                searchIntent.getDataString() :
+                "https://upload.wikimedia.org/wikipedia/commons/3/36/Wall_drug_jackalope.jpg";
+
         Picasso.with(this)
-                .load("https://upload.wikimedia.org/wikipedia/commons/3/36/Wall_drug_jackalope.jpg")
+                .load(animalURL)
                 .into(stateAnimal);
 
         Uri allStates = StateContract.StateEntry.STATE_URI.buildUpon().appendPath("all_states").build();
@@ -46,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             for(String key : data.keySet()) {
                 values[contentValueIndex] = new ContentValues();
                 values[contentValueIndex].put(SearchManager.SUGGEST_COLUMN_TEXT_1, key);
-                values[contentValueIndex].put(StateContract.StateEntry.ANIMAL, data.get(key));
+                values[contentValueIndex].put(SearchManager.SUGGEST_COLUMN_INTENT_DATA, data.get(key));
                 contentValueIndex++;
             }
             Uri insertStates = StateContract.StateEntry.STATE_URI.buildUpon().appendPath("bulk_insert").build();
@@ -67,6 +77,4 @@ public class MainActivity extends AppCompatActivity {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return true;
     }
-
-
 }

@@ -108,7 +108,7 @@ public class StateContentProvider extends ContentProvider {
                 return dbHelper.getReadableDatabase().query(
                         StateContract.StateEntry.TABLE,
                         projection,
-                        StateContract.StateEntry.ANIMAL + " LIKE ?",
+                        SearchManager.SUGGEST_COLUMN_INTENT_DATA + " LIKE ?",
                         new String[] {"%" + animalSearch + "%"},
                         null,
                         null,
@@ -130,7 +130,7 @@ public class StateContentProvider extends ContentProvider {
                 return dbHelper.getReadableDatabase().query(
                         StateContract.StateEntry.TABLE,
                         projection,
-                        StateContract.StateEntry.ANIMAL + " = ?",
+                        SearchManager.SUGGEST_COLUMN_INTENT_DATA + " = ?",
                         new String[] {animal},
                         null,
                         null,
