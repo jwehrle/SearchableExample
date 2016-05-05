@@ -4,6 +4,7 @@
 
     <uses-permission android:name="com.jwehrle.state.provider.READ"/>
     <uses-permission android:name="com.jwehrle.state.provider.WRITE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"

@@ -10,19 +10,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.widget.SearchView;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
     public static String LOG_TAG = MainActivity.class.getName();
-    SearchView searchView;
+    ImageView stateAnimal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        stateAnimal = (ImageView)findViewById(R.id.image_state_animal);
+        Picasso.with(this)
+                .load("https://upload.wikimedia.org/wikipedia/commons/3/36/Wall_drug_jackalope.jpg")
+                .into(stateAnimal);
 
         Uri allStates = StateContract.StateEntry.STATE_URI.buildUpon().appendPath("all_states").build();
         Log.d(LOG_TAG, "Passing uri " + allStates.toString());

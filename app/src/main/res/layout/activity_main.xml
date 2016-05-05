@@ -4,31 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context="com.jwehrle.assignment3101.MainActivity">
 
-    <!--<android.support.v7.widget.Toolbar-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="@color/colorPrimary">-->
+    <ImageView
+        android:id="@+id/image_state_animal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:layout_centerInParent="true"/>
 
-        <!--<android.support.v7.widget.SearchView-->
-            <!--android:id="@+id/searchView"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"/>-->
-    <!--</android.support.v7.widget.Toolbar>-->
-
-    <!--<TextView-->
-        <!--android:id="@+id/Instruction"-->
-        <!--android:textSize="24sp"-->
-        <!--android:text="Click the button to see a searchable activity!"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" />-->
-
-    <!--<Button-->
-        <!--android:id="@+id/startSearchable"-->
-        <!--android:layout_below="@id/Instruction"-->
-        <!--android:text="Click Here!"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" />-->
 </RelativeLayout>
