@@ -7,21 +7,21 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Created by jwehrle on 4/27/16.
- *
+ * Minimal SQLiteOpenHelper creates a state-animal table with SearchManager columns for SearchManager
+ * integration.
  */
 public class DBHelper extends SQLiteOpenHelper {
 
     private static DBHelper sInstance = null;
 
     private static final String DATABASE_NAME = "state_database";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     private static final String CREATE_TABLE = "create table " +
             StateContract.StateEntry.TABLE + " (" +
             StateContract.StateEntry._ID + " integer primary key autoincrement, " +
             SearchManager.SUGGEST_COLUMN_TEXT_1 + " text, " +
             SearchManager.SUGGEST_COLUMN_INTENT_DATA + " text);";
-            //StateContract.StateEntry.ANIMAL + " text);";
 
     public static synchronized DBHelper getInstance(Context context) {
         if (sInstance == null) {

@@ -6,7 +6,6 @@
     android:hint="@string/search_hint"
     android:searchSuggestAuthority="com.jwehrle.state.provider"
     android:searchSuggestIntentAction="android.intent.action.VIEW"
-
     android:searchSuggestSelection="suggest_text_1 LIKE ?"
     android:searchSuggestPath="state/suggest">
 

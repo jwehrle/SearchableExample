@@ -4,8 +4,10 @@ import java.util.HashMap;
 
 /**
  * Created by jwehrle on 4/27/16.
- * State data to load if the state_table is empty. I know there must be a better way but I just
- * need to get this assignment moving.
+ * State data to load if the state_table is empty. I know there are better ways but this seemed
+ * simplest for the purposes of an example.
+ * This class is a singleton because I don't want to fill the map more than once.
+ * All images are from Wikipedia and are in the public commons.
  */
 public class StateData {
 
